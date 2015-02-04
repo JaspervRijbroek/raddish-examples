@@ -1,0 +1,15 @@
+{
+  "db": {
+    "default": {
+      "host": "37.34.54.223",
+      "user": "demo",
+      "password": "Tester22",
+      "database": "raddish_demo",
+      "prefix": false
+    }
+  }
+  "cache": true,
+  "format": "json",
+  "gzip": true,
+  "port": 1337
+}
