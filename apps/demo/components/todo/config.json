@@ -1,0 +1,14 @@
+{
+  "dispatcher": {
+    "controller": "item"
+  },
+  "table": {
+    "todo": {
+      "behaviors": {
+        "creatable": {},
+        "modifiable": {},
+        "sluggable": {}
+      }
+    }
+  }
+}

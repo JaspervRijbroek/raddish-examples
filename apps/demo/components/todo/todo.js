@@ -5,7 +5,7 @@
  */
 
 function MenuComponent(request, response) {
-    ObjectManager.get('com://demo/menu.dispatcher.http')
+    ObjectManager.get('com://demo/todo.dispatcher.http')
         .then(function(dispatcher) {
             /**
              * After this method most of the magic is happening.
