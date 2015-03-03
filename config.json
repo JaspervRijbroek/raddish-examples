@@ -1,9 +1,9 @@
 {
   "db": {
     "default": {
-      "host": "37.34.54.223",
-      "user": "demo",
-      "password": "Tester22",
+      "host": "33.33.33.58",
+      "user": "root",
+      "password": "root",
       "database": "raddish_demo",
       "prefix": false
     }
