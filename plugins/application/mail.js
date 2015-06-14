@@ -11,32 +11,55 @@ function MailPlugin() {
     this.connection = false;
 }
 
-MailPlugin.prototype.onBeforeRegister = function(alias, path) {
-    this._getConnection();
-    return this._parseMail();
+MailPlugin.prototype.onAfterRegister = function(application) {
+    this._getConnection()
+        .then(this._parseMail.bind(this))
+        .catch(function(error) {
+            console.log(error);
+        });
+
+    return Promise.resolve(true);
 };
 
 MailPlugin.prototype._parseMail = function() {
     return this._openMailbox('inbox')
-        .then(this._findUnseen)
-        .then(this._fetchMessages)
+        .then(this._findUnseen.bind(this))
+        .then(this._fetchMessages.bind(this))
         .then(function(messages) {
             // We have just received a complete list of messages.
             // After this we will save all the records to the database.
-
             return ObjectManager.get('com://demo/email.database.rowset.email')
                 .then(function(rowset) {
                     return rowset.setData(messages);
                 });
         })
         .then(function(rowset) {
+
             return rowset.save();
+        })
+        .catch(function(error) {
+            console.log(error.stack);
+            console.log(error);
         });
 };
 
 MailPlugin.prototype._getConnection = function() {
-    var imapConfig = Raddish.getConfig('imap'); // Get the config from the config.json file this is equal to the module config.
-    this.connection = new Imap(mailConfig);
+    var self = this;
+
+    return new Promise(function(resolve, reject) {
+        var imapConfig = Raddish.getConfig('imap'); // Get the config from the config.json file this is equal to the module config.
+        self.connection = new Imap(imapConfig);
+
+        self.connection.on('ready', function() {
+            return resolve();
+        });
+
+        self.connection.on('error', function (error) {
+            return reject(error);
+        });
+
+        self.connection.connect();
+    });
 };
 
 MailPlugin.prototype._openMailbox = function(mailbox) {
@@ -44,7 +67,7 @@ MailPlugin.prototype._openMailbox = function(mailbox) {
     mailbox = mailbox.toString().toUpperCase();
 
     return new Promise(function(resolve, reject) {
-        self.connection.openBox(mailbox, function(err, box) {
+        self.connection.openBox(mailbox, false, function(err, box) {
             if(err) {
                 return reject(err);
             }

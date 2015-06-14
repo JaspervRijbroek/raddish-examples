@@ -3,6 +3,7 @@
   "description": "Examples for raddish which are kept up to date.",
   "dependencies": {
     "raddish": "*",
-    "imap": "*"
+    "imap": "*",
+    "mailparser": "*"
   }
 }
