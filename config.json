@@ -1,14 +1,25 @@
 {
   "db": {
     "default": {
-      "host": "33.33.33.58",
+      "host": "localhost",
       "user": "root",
-      "password": "root",
+      "password": "xxx",
       "database": "raddish_demo",
       "prefix": false
     }
   },
+  "imap": {
+    "user": "jasper199069@gmail.com",
+    "password": "t89P*.AV",
+    "host": "imap.gmail.com",
+    "port": 993,
+    "tls": true,
+    "keepalive": true
+  },
   "cache": true,
+  "socketio": 1338,
+  "plugins": "/plugins",
+  "public": "/public",
   "format": "json",
   "gzip": true,
   "port": 1337
