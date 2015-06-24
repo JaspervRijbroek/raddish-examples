@@ -36,6 +36,17 @@ ChatPlugin.prototype.onAfterStart = function() {
     });
 
     Socket.addListener('message', function(group, message) {
+        ObjectManager.get('com://demo/chat.database.row.message')
+            .then(function(row) {
+                return row.setData({
+                    message: message,
+                    group: group
+                });
+            })
+            .then(function(row) {
+                row.save();
+            });
+
         Socket.io.to(group).emit('message', message);
     });
 };
