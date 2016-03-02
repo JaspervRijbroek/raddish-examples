@@ -3,7 +3,7 @@ var Application = require('raddish').Application,
 
 function TeemrApplication(config) {
     config.component = __dirname + '/components';
-    config.
+    config.config = __dirname + '/config';
 
     Application.call(this, config);
 }
