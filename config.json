@@ -3,24 +3,19 @@
     "default": {
       "host": "localhost",
       "user": "root",
-      "password": "xxx",
+      "password": "root",
       "database": "raddish_demo",
       "prefix": false
     }
   },
-  "imap": {
-    "user": "jasper199069@gmail.com",
-    "password": "t89P*.AV",
-    "host": "imap.gmail.com",
-    "port": 993,
-    "tls": true,
-    "keepalive": true
+  "router": {
+    "routes": {
+      "/index.html": "/teemr/application"
+    }
   },
   "cache": true,
-  "socketio": 1338,
-  "plugins": "/plugins",
   "public": "/public",
-  "format": "json",
+  "format": "html",
   "gzip": true,
   "port": 1337
 }

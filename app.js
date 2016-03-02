@@ -4,7 +4,7 @@ var raddish = require('raddish');
 raddish.setConfig('./config.json');
 
 // To register your application you need to set it into raddish.
-raddish.setApplication('demo', './apps/demo/app.js');
+raddish.setApplication('teemr', './apps/teemr/app.js');
 
 // Check for updates.
 raddish.checkUpdate();
