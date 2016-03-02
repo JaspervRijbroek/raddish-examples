@@ -7,17 +7,22 @@ function ApplicationDispatcher(config) {
 
 util.inherits(ApplicationDispatcher, Dispatcher);
 
+/**
+ * Override for the dispatch method.
+ * In this override we will tell the system to load a dispatcher of the requested component (if given!).
+ * else we will render the normal template. If the component is found and rendered this content
+ * might be rendered into the template.
+ *
+ * @param {Request} request The nodejs request object.
+ * @param {Response} response The nodejs response object.
+ */
 ApplicationDispatcher.prototype.dispatch = function(request, response) {
-    // This will return the data instead of dispatching it.
-    // So we will run the component as expected.
-    // This should still be somewhere in the request.
-
-    // This is an override for the view. Because we always need to render the application view.
     var self = this;
-    request.url.query.view = 'application';
 
     this._runComponent(request, response)
         .then(function(data) {
+            request.url.query.view = 'application';
+
             return Dispatcher.prototype.dispatch.call(self, request, response)
                 .then(function(context) {
                     context.result.input = data;
@@ -51,8 +56,56 @@ ApplicationDispatcher.prototype.dispatch = function(request, response) {
         });
 };
 
+/**
+ * An override for the parseRequest method.
+ * This method is added because the application component has nothing to do with the data in the request,
+ * also if I try to parse a request twice it will give issues. (no idea from where??)
+ *
+ * @param {Request }req The nodejs request object.
+ */
+ApplicationDispatcher.prototype.parseRequest = function (req) {
+    return Promise.resolve(true);
+};
+
+/**
+ * Override for the controller.
+ * The controller requested for the application component always needs to be application.
+ * Unless an error is dispatched.
+ *
+ * @param {Request} req The nodejs request object.
+ * @returns {Controller} A promise containing the requested controller.
+ */
+ApplicationDispatcher.prototype.getController = function (req) {
+    var identifier = this.getIdentifier().clone();
+
+    return this.getObject(identifier.setPath(['controller']).setName('application'))
+        .then(function(controller) {
+            controller.request      = req.url.query;
+            controller.request.view = req.url.query.view || Inflector.pluralize(controller.getIdentifier().getName());
+            controller.format       = (req.url.query.format || Raddish.getConfig('format'));
+
+            return controller;
+        });
+};
+
+/**
+ * A custom method which will allow us to get the HTML output of a component.
+ *
+ * @param {Request} request The nodejs request object.
+ * @param {Response} response The nodejs response object.
+ * @returns {Promise} A promise containing the HTML output (if any).
+ * @private
+ */
 ApplicationDispatcher.prototype._runComponent = function(request, response) {
-    return Promise.resolve('hello world');
+    // We have the request and in here is the component.
+    if(ObjectLoader.require('com://teemr/' + request.url.query.component + '.dispatcher.http')) {
+        return this.getObject('com://teemr/' + request.url.query.component + '.dispatcher.http')
+            .then(function (dispatcher) {
+                return dispatcher.dispatch(request, response);
+            })
+    } else {
+        return Promise.resolve('');
+    }
 };
 
 module.exports = ApplicationDispatcher;

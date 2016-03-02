@@ -20,7 +20,6 @@ TeemrApplication.prototype.runComponent = function(component, request, response)
      */
 
     try {
-
         var Component = require(this.config.component + '/application/application');
         new Component(request, response);
     } catch(error) {

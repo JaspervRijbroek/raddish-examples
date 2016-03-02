@@ -3,7 +3,7 @@
  * "com_default" will take care of that, this will incorporate all the needed data for the html layer.
  */
 
-var Dispatcher = require('raddish').HttpDispatcher,
+var Dispatcher = require('raddish').DispatcherAbstract,
     util = require('util');
 
 function DispatcherDefault(config) {
@@ -12,9 +12,20 @@ function DispatcherDefault(config) {
 
 util.inherits(DispatcherDefault, Dispatcher);
 
+/**
+ * An override for the dispatcher.
+ * The override is created because we want to !!return!! the rendered view.
+ * instead of returning all the data to the reponse directly. com_application will do this!
+ *
+ * @param {Request} request The nodejs request object.
+ * @param {Response} response The nodejs response object.
+ * @returns {Promise} A promise containing the rendered HTML.
+ */
 DispatcherDefault.prototype.dispatch = function(request, response) {
-    // Usually the dispatcher will send everything back, but in this case the dispatcher of the
-    // application component will do that for us, so all we have to return here is the rendered view.
+    return Dispatcher.prototype.dispatch.call(this, request, response)
+        .then(function (data) {
+            return data.result.display();
+        });
 };
 
 module.exports = DispatcherDefault;

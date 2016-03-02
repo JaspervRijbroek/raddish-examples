@@ -10,6 +10,7 @@
   },
   "router": {
     "routes": {
+      "*": "/teemr",
       "/index.html": "/teemr/application"
     }
   },
