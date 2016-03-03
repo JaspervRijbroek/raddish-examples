@@ -1,5 +1,6 @@
 var Dispatcher = require('raddish').DispatcherAbstract,
-    util = require('util');
+    util = require('util'),
+    fs = require('fs');
 
 function ApplicationDispatcher(config) {
     Dispatcher.call(this, config);
@@ -18,6 +19,12 @@ util.inherits(ApplicationDispatcher, Dispatcher);
  */
 ApplicationDispatcher.prototype.dispatch = function(request, response) {
     var self = this;
+
+    // We have to check for a file here.
+    if(this._checkFile(request.url.path)) {
+        fs.createReadStream(this._checkFile(request.url.path)).pipe(response);
+        return;
+    }
 
     this._runComponent(request, response)
         .then(function(data) {
@@ -106,6 +113,16 @@ ApplicationDispatcher.prototype._runComponent = function(request, response) {
     } else {
         return Promise.resolve('');
     }
+};
+
+ApplicationDispatcher.prototype._checkFile = function(path) {
+    var path = process.cwd() + '/apps/' + path;
+
+    if(fs.existsSync(path)) {
+        return path;
+    }
+
+    return false;
 };
 
 module.exports = ApplicationDispatcher;

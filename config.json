@@ -11,7 +11,8 @@
   "router": {
     "routes": {
       "*": "/teemr",
-      "/index.html": "/teemr/application"
+      "/index.html": "/teemr/application",
+      "/assets/*": "/teemr/application/assets"
     }
   },
   "cache": true,

@@ -1,9 +1,19 @@
-<h1>Test Page</h1>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Raddish POC</title>
+        {{#media 'link'}}css/style.css{{/media}}
+        {{#media 'script'}}js/test.js{{/media}}
+    </head>
+    <body>
+        <h1>Test Page</h1>
 
-{{#if component}}
-    {{{component}}}
-{{else}}
-    {{helper 'grid.form'}}
-
-    Welcome to the homepage :D
-{{/if}}
+        {{#if component}}
+            {{{component}}}
+        {{else}}
+            <p>
+                Welcome to the homepage :D
+            </p>
+        {{/if}}
+    </body>
+</html>

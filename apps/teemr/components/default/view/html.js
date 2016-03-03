@@ -46,43 +46,30 @@ ViewHtml.prototype.display = function() {
         template = Handlebars.compile(fs.readFileSync(path).toString());
 
     this.data = this.data || {};
-
-    // This line isn't safe! I have to find something for this.
     this.data.component = this.input;
 
     return template(this.data);
 };
 
 ViewHtml.prototype._registerHelpers = function() {
-    /**
-     * There are a few ways we can register helper, we can load them all in. they will be used when they are needed
-     * anyway. Or we can create one method and do it all with that one.
-     *
-     * I am going for the second option. In here we have much more possibilities.
-     */
     var self = this;
 
     Handlebars.registerHelper('helper', function() {
         // we will use the arguments here.
         var params = Array.prototype.slice.call(arguments),
-            parts = params[0].split('.');
+            parts = params.shift().split('.');
 
         var identifier = self.getIdentifier().clone();
         identifier.setPath(['template', 'helper']);
         identifier.setName(parts[0]);
 
-        console.log('identifier');
         var Helper = ObjectLoader.require(identifier);
         if(Helper) {
             var helper = new Helper();
-            return helper[parts[1]](params.splice(1));
+            return helper[parts[1]].apply(helper, params);
         } else {
             return '';
         }
-    });
-
-    Handlebars.registerHelper('blockHelper', function() {
-
     });
 
     Handlebars.registerHelper('modules', function(position) {
@@ -93,9 +80,22 @@ ViewHtml.prototype._registerHelpers = function() {
         // Count the modules in a certain position.
     });
 
-    //Handlebars.registerHelper('component', function() {
-    //    return new Handlebars.SafeString(this.input);
-    //});
+    Handlebars.registerHelper('media', function(tag, options) {
+        // This is too easy to be true ofcourse.
+        var path = '/assets/' + options.fn();
+        var element = '';
+
+        switch(tag) {
+            case 'link':
+                element = '<link rel="stylesheet" href="' + path + '"/>';
+                break;
+            case 'script':
+                element = '<script type="text/javascript" src="' + path + '"></script>';
+                break;
+        }
+
+        return element;
+    });
 };
 
 module.exports = ViewHtml;
